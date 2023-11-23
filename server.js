@@ -9,8 +9,8 @@ const app = express();
 const server = http.Server(app);
 const io = socketIO(server);
 
-//server.listen(process.env.PORT, process.env.IP);
-server.listen(3000);
+server.listen(process.env.PORT, process.env.IP);
+//server.listen(3000);
 /////////////////switch before deploy//////////////////////////////
 
 console.log('server running');
