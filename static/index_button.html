@@ -1,0 +1,231 @@
+<html>
+  <head>
+    <title>BATTLE JS</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  </head>
+
+  <body style="display: flex; flex-direction: column; width: 100%; height: 100%; margin: 0;">
+    <div style="flex: 1 1; position: relative; overflow:hidden;">
+        <div id="chat-area" style="width:100%; height:100%; display: flex; align-items: bottom; position:absolute; z-index:10;">
+          <div style="text-align: center; width: 100%; font-size: xx-large;">
+            <!--<button style="font-size: 10px;" id="sound-button">now sound on</button>-->
+              <input type="text" name="chat" id="chat" placeholder="chat" autofocus>
+              <button style="font-size: 10px;" id="send-button">send</button>
+              
+              
+              
+
+
+
+              <div id="join">
+                <button style="font-size: 10px;" id="join-button">join game</button>
+              </div>
+          </div>
+        </div>
+        <div id="start-screen" style="width:100%; height:100%; display: flex; align-items: center; position:absolute; z-index:10;background-color:rgba(128,128,128,0.5);">
+          
+            
+            <div style="text-align: center; width: 100%; font-size: 20px;">
+              <p>矢印キーで移動　A,S,キーで攻撃</br>Sキーと矢印キーを組み合わせると別の技が出ます(キャラによる)</p>
+                <input type="text" name="nickname" id="nickname" placeholder="Your nickname" autofocus><br/><br/>
+                <button style="font-size: xx-large;" id="start-button">Start</button>
+                </br>
+                <div class="radiobutton" style="font-size: 15px;">
+                  <input type="radio" name="fighter" value="sword" checked="checked"> sword(剣士：おすすめ)</br>
+                  <input type="radio" name="fighter" value="gun"> gun(銃：遠距離タイプ)</br>
+                  <input type="radio" name="fighter" value="gladiator"> gladiator(拳闘士：素早く脆い)</br>
+                  <input type="radio" name="fighter" value="spear"> spear(槍：重くて強い)</br>       
+                </div>
+                </br>
+                
+                <button style="font-size: 10;" id="view-button">view mode</button>
+            </div>
+        </div>
+        <canvas id="canvas-2d" width="1536" height="768" style="position:absolute;width:100%;height:100%;object-fit:contain;"></canvas>
+    </div>
+
+    <img id="sea" src="/static/image/sea.jpg" style="display: none;">
+
+    <img id="sw0-0" src="/static/image/sword/stand.gif" style="display: none;">
+    <img id="sw1-0" src="/static/image/sword/walk_1.gif" style="display: none;">
+    <img id="sw1-1" src="/static/image/sword/walk_2.gif" style="display: none;">
+    <img id="sw1-2" src="/static/image/sword/walk_3.gif" style="display: none;">
+    <img id="sw1-3" src="/static/image/sword/walk_4.gif" style="display: none;">
+
+    <img id="sw2-0" src="/static/image/sword/slash_1.gif" style="display: none;">
+    <img id="sw2-1" src="/static/image/sword/slash_2.gif" style="display: none;">
+    <img id="sw2-2" src="/static/image/sword/slash_3.gif" style="display: none;">
+    <img id="sw2-3" src="/static/image/sword/slash_4.gif" style="display: none;">
+    <img id="sw2-4" src="/static/image/sword/slash_5.gif" style="display: none;">
+    <img id="sw2-5" src="/static/image/sword/slash_6.gif" style="display: none;">
+    
+    <img id="sw3-0" src="/static/image/sword/stab_1.gif" style="display: none;">
+    <img id="sw3-1" src="/static/image/sword/stab_2.gif" style="display: none;">
+    <img id="sw3-2" src="/static/image/sword/stab_3.gif" style="display: none;">
+    <img id="sw3-3" src="/static/image/sword/stab_4.gif" style="display: none;">
+    <img id="sw3-4" src="/static/image/sword/stab_5.gif" style="display: none;">
+    <img id="sw3-5" src="/static/image/sword/stab_6.gif" style="display: none;">
+    <img id="sw3-6" src="/static/image/sword/stab_7.gif" style="display: none;">
+    <img id="sw3-7" src="/static/image/sword/stab_8.gif" style="display: none;">
+    <img id="sw3-8" src="/static/image/sword/stab_9.gif" style="display: none;">
+    <img id="sw3-9" src="/static/image/sword/stab_10.gif" style="display: none;">
+    
+    <img id="sw4-0" src="/static/image/sword/upper_1.gif" style="display: none;">
+    <img id="sw4-1" src="/static/image/sword/upper_2.gif" style="display: none;">
+    <img id="sw4-2" src="/static/image/sword/upper_3.gif" style="display: none;">
+    <img id="sw4-3" src="/static/image/sword/upper_4.gif" style="display: none;">
+    <img id="sw4-4" src="/static/image/sword/upper_5.gif" style="display: none;">
+    <img id="sw4-5" src="/static/image/sword/upper_6.gif" style="display: none;">
+    <img id="sw4-6" src="/static/image/sword/upper_7.gif" style="display: none;">
+    
+    <img id="sw5-0" src="/static/image/sword/drop_1.gif" style="display: none;">
+    <img id="sw5-1" src="/static/image/sword/drop_2.gif" style="display: none;">
+    <img id="sw5-2" src="/static/image/sword/drop_3.gif" style="display: none;">
+    <img id="sw5-3" src="/static/image/sword/drop_4.gif" style="display: none;">
+    <img id="sw5-4" src="/static/image/sword/drop_5.gif" style="display: none;">
+    <img id="sw5-5" src="/static/image/sword/drop_6.gif" style="display: none;">
+    <img id="sw5-6" src="/static/image/sword/drop_7.gif" style="display: none;">
+    <img id="sw5-7" src="/static/image/sword/drop_8.gif" style="display: none;">
+    <img id="sw5-8" src="/static/image/sword/drop_9.gif" style="display: none;">
+    <img id="sw5-9" src="/static/image/sword/drop_10.gif" style="display: none;">
+    <img id="sw5-10" src="/static/image/sword/drop_11.gif" style="display: none;">
+
+
+    <img id="gn0-0" src="/static/image/gun/stand.gif" style="display: none;">
+    <img id="gn1-0" src="/static/image/gun/walk_1.gif" style="display: none;">
+    <img id="gn1-1" src="/static/image/gun/walk_2.gif" style="display: none;">
+    <img id="gn1-2" src="/static/image/gun/walk_3.gif" style="display: none;">
+    <img id="gn1-3" src="/static/image/gun/walk_4.gif" style="display: none;">
+    
+    <img id="gn2-0" src="/static/image/gun/fire_1.gif" style="display: none;">
+    <img id="gn2-1" src="/static/image/gun/fire_2.gif" style="display: none;">
+    <img id="gn2-2" src="/static/image/gun/fire_3.gif" style="display: none;">
+    
+    <img id="gn3-0" src="/static/image/gun/upper_1.gif" style="display: none;">
+    <img id="gn3-1" src="/static/image/gun/upper_2.gif" style="display: none;">
+    <img id="gn3-2" src="/static/image/gun/upper_3.gif" style="display: none;">
+    <img id="gn3-3" src="/static/image/gun/upper_4.gif" style="display: none;">
+    <img id="gn3-4" src="/static/image/gun/upper_5.gif" style="display: none;">
+    <img id="gn3-5" src="/static/image/gun/upper_6.gif" style="display: none;">
+    <img id="gn3-6" src="/static/image/gun/upper_7.gif" style="display: none;">
+    <img id="gn3-7" src="/static/image/gun/upper_8.gif" style="display: none;">
+    <img id="gn3-8" src="/static/image/gun/upper_9.gif" style="display: none;">
+    <img id="gn3-9" src="/static/image/gun/upper_10.gif" style="display: none;">
+    <img id="gn3-10" src="/static/image/gun/upper_11.gif" style="display: none;">
+    <img id="gn3-11" src="/static/image/gun/upper_12.gif" style="display: none;">
+    <img id="gn3-12" src="/static/image/gun/upper_13.gif" style="display: none;">
+    
+    <img id="gn4-0" src="/static/image/gun/bigfire_1.gif" style="display: none;">
+    <img id="gn4-1" src="/static/image/gun/bigfire_2.gif" style="display: none;">
+    <img id="gn4-2" src="/static/image/gun/bigfire_3.gif" style="display: none;">
+    <img id="gn4-3" src="/static/image/gun/bigfire_4.gif" style="display: none;">
+    <img id="gn4-4" src="/static/image/gun/bigfire_5.gif" style="display: none;">
+    <img id="gn4-5" src="/static/image/gun/bigfire_6.gif" style="display: none;">
+    <img id="gn4-6" src="/static/image/gun/bigfire_7.gif" style="display: none;">
+    <img id="gn4-7" src="/static/image/gun/bigfire_8.gif" style="display: none;">
+
+    
+    <img id="gl0-0" src="/static/image/gladiator/stand.gif" style="display: none;">
+    <img id="gl1-0" src="/static/image/gladiator/walk.gif" style="display: none;">
+
+    <img id="gl2-0" src="/static/image/gladiator/beam_1.gif" style="display: none;">
+    <img id="gl2-1" src="/static/image/gladiator/beam_2.gif" style="display: none;">
+    <img id="gl2-2" src="/static/image/gladiator/beam_3.gif" style="display: none;">
+    <img id="gl2-3" src="/static/image/gladiator/beam_4.gif" style="display: none;">
+    <img id="gl2-4" src="/static/image/gladiator/beam_5.gif" style="display: none;">
+
+    <img id="gl3-0" src="/static/image/gladiator/punch_1.gif" style="display: none;">
+    <img id="gl3-1" src="/static/image/gladiator/punch_2.gif" style="display: none;">
+    
+    <img id="gl4-0" src="/static/image/gladiator/kick_1.gif" style="display: none;">
+    <img id="gl4-1" src="/static/image/gladiator/kick_2.gif" style="display: none;">
+    <img id="gl4-2" src="/static/image/gladiator/kick_3.gif" style="display: none;">
+    <img id="gl4-3" src="/static/image/gladiator/kick_4.gif" style="display: none;">
+    <img id="gl4-4" src="/static/image/gladiator/kick_5.gif" style="display: none;">
+    
+    
+    <img id="sp0-0" src="/static/image/spear/stand.gif" style="display: none;">
+    <img id="sp1-0" src="/static/image/spear/walk_1.gif" style="display: none;">
+    <img id="sp1-1" src="/static/image/spear/walk_2.gif" style="display: none;">
+    <img id="sp1-2" src="/static/image/spear/walk_3.gif" style="display: none;">
+    <img id="sp1-3" src="/static/image/spear/walk_4.gif" style="display: none;">
+    
+    <img id="sp2-0" src="/static/image/spear/stab_1.gif" style="display: none;">
+    <img id="sp2-1" src="/static/image/spear/stab_2.gif" style="display: none;">
+    <img id="sp2-2" src="/static/image/spear/stab_3.gif" style="display: none;">
+    <img id="sp2-3" src="/static/image/spear/stab_4.gif" style="display: none;">
+    
+    <img id="sp3-0" src="/static/image/spear/longstab_1.gif" style="display: none;">
+    <img id="sp3-1" src="/static/image/spear/longstab_2.gif" style="display: none;">
+    <img id="sp3-2" src="/static/image/spear/longstab_3.gif" style="display: none;">
+    <img id="sp3-3" src="/static/image/spear/longstab_4.gif" style="display: none;">
+    <img id="sp3-4" src="/static/image/spear/longstab_5.gif" style="display: none;">
+    <img id="sp3-5" src="/static/image/spear/longstab_6.gif" style="display: none;">
+    <img id="sp3-6" src="/static/image/spear/longstab_7.gif" style="display: none;">
+    <img id="sp3-7" src="/static/image/spear/longstab_8.gif" style="display: none;">
+    <img id="sp3-8" src="/static/image/spear/longstab_9.gif" style="display: none;">
+    <img id="sp3-9" src="/static/image/spear/longstab_10.gif" style="display: none;">
+    <img id="sp3-10" src="/static/image/spear/longstab_11.gif" style="display: none;">
+    <img id="sp3-11" src="/static/image/spear/longstab_12.gif" style="display: none;">
+    <img id="sp3-12" src="/static/image/spear/longstab_13.gif" style="display: none;">
+    <img id="sp3-13" src="/static/image/spear/longstab_14.gif" style="display: none;">
+    <img id="sp3-14" src="/static/image/spear/longstab_15.gif" style="display: none;">
+    <img id="sp3-15" src="/static/image/spear/longstab_16.gif" style="display: none;">
+    <img id="sp3-16" src="/static/image/spear/longstab_17.gif" style="display: none;">
+    <img id="sp3-17" src="/static/image/spear/longstab_18.gif" style="display: none;">
+    <img id="sp3-18" src="/static/image/spear/longstab_19.gif" style="display: none;">
+    <img id="sp3-19" src="/static/image/spear/longstab_20.gif" style="display: none;">
+    <img id="sp3-20" src="/static/image/spear/longstab_21.gif" style="display: none;">
+    <img id="sp3-21" src="/static/image/spear/longstab_22.gif" style="display: none;">
+    <img id="sp3-22" src="/static/image/spear/longstab_23.gif" style="display: none;">
+
+
+    <img id="pr0-0" src="/static/image/projectile/bullet.gif" style="display: none;">
+
+    <img id="pr1-0" src="/static/image/projectile/explosion_1.gif" style="display: none;">
+    <img id="pr1-1" src="/static/image/projectile/explosion_2.gif" style="display: none;">
+    <img id="pr1-2" src="/static/image/projectile/explosion_3.gif" style="display: none;">
+    <img id="pr1-3" src="/static/image/projectile/explosion_4.gif" style="display: none;">
+    <img id="pr1-4" src="/static/image/projectile/explosion_5.gif" style="display: none;">
+    <img id="pr1-5" src="/static/image/projectile/explosion_6.gif" style="display: none;">
+    <img id="pr1-6" src="/static/image/projectile/explosion_7.gif" style="display: none;">
+    <img id="pr1-7" src="/static/image/projectile/explosion_8.gif" style="display: none;">
+    <img id="pr1-8" src="/static/image/projectile/explosion_9.gif" style="display: none;">
+    
+    <img id="pr2-0" src="/static/image/projectile/miniexplosion_1.gif" style="display: none;">
+    <img id="pr2-1" src="/static/image/projectile/miniexplosion_2.gif" style="display: none;">
+    <img id="pr2-2" src="/static/image/projectile/miniexplosion_3.gif" style="display: none;">
+    <img id="pr2-3" src="/static/image/projectile/miniexplosion_4.gif" style="display: none;">
+    <img id="pr2-4" src="/static/image/projectile/miniexplosion_5.gif" style="display: none;">
+    <img id="pr2-5" src="/static/image/projectile/miniexplosion_6.gif" style="display: none;">
+    <img id="pr2-6" src="/static/image/projectile/miniexplosion_7.gif" style="display: none;">
+    
+    <img id="pr3-0" src="/static/image/projectile/minipowerwave.gif" style="display: none;">
+    
+    <img id="pr4-0" src="/static/image/projectile/powerwave.gif" style="display: none;">
+    
+    <img id="pr6-0" src="/static/image/projectile/hookspear_1.gif" style="display: none;">
+    <img id="pr6-1" src="/static/image/projectile/hookspear_2.gif" style="display: none;">
+    <img id="pr6-2" src="/static/image/projectile/hookspear_3.gif" style="display: none;">
+    <img id="pr6-3" src="/static/image/projectile/hookspear_4.gif" style="display: none;">
+    <img id="pr6-4" src="/static/image/projectile/hookspear_5.gif" style="display: none;">
+    <img id="pr6-5" src="/static/image/projectile/hookspear_6.gif" style="display: none;">
+    <img id="pr6-6" src="/static/image/projectile/hookspear_7.gif" style="display: none;">
+    <img id="pr6-7" src="/static/image/projectile/hookspear_8.gif" style="display: none;">
+    <img id="pr6-8" src="/static/image/projectile/hookspear_9.gif" style="display: none;">
+
+    <div id="controller">
+      <button type="button" id="A_button"><img src="/static/image/button/button_A.gif" height="40" width="40"></button>
+      <button type="button" id="S_button"><img src="/static/image/button/button_S.gif" height="40" width="40"></button>
+
+      <button type="button" id="up_button"><img src="/static/image/button/button_up.gif" height="40" width="40"></button>
+      <button type="button" id="down_button"><img src="/static/image/button/button_down.gif" height="40" width="40"></button>
+      <button type="button" id="left_button"><img src="/static/image/button/button_left.gif" height="40" width="40"></button>
+      <button type="button" id="right_button"><img src="/static/image/button/button_right.gif" height="40" width="40"></button>
+  </div>
+  
+    <script src="/static/game.js"></script>
+  </body>
+</html>
